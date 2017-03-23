@@ -43,7 +43,7 @@ public class Userinfo extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		LOG.debug(request.getRequestURL() + "------------");
 		try {
-			Connection conn = DBUtil.getConnection();
+			Connection conn = DBUtil.getConnectionAli();
 			String sql = "SELECT * FROM device";
 			PreparedStatement p = conn.prepareStatement(sql);
 			ResultSet result = p.executeQuery();
