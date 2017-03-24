@@ -1,4 +1,4 @@
-package mvn.servlet;
+package mvn.entity;
 
 import java.io.Serializable;
 
@@ -9,8 +9,8 @@ public class BaseEntity implements Serializable {
 	 */
 	private static final long serialVersionUID = 7430998335889175168L;
 	
-	protected boolean status;
-	protected String msg;
+	public boolean status;
+	public String msg;
 	public boolean isStatus() {
 		return status;
 	}

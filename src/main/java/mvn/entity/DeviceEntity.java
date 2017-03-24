@@ -1,7 +1,5 @@
 package mvn.entity;
 
-import mvn.servlet.BaseEntity;
-
 public class DeviceEntity extends BaseEntity {
 	/**
 	 * 

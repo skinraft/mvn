@@ -2,8 +2,8 @@ package mvn.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import mvn.entity.DeviceEntity;
 import mvn.sql.DeviceInfox;
+import mvn.sql.DeviceLogx;
 
 /**
  * Servlet implementation class UpdateDeviceInfo
@@ -25,6 +26,7 @@ import mvn.sql.DeviceInfox;
 public class UpdateDeviceInfo extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOG = LogManager.getLogger(UpdateDeviceInfo.class);
+	HashMap<String, String> rfid = new HashMap<String, String>();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -52,6 +54,28 @@ public class UpdateDeviceInfo extends HttpServlet {
 					JSONObject object = new JSONObject(name);
 					if (!object.isNull("rfid")) {
 						// 传输rfid数据
+						String content = object.getJSONObject("rfid").getString("raw");
+						if (content.equals("01010101010101010101")) {
+							// 开始记录,先移除记录表map中上次的数据
+							synchronized (rfid) {
+								if (rfid.containsKey(object.getString("mac"))) {
+									rfid.remove(object.getString("mac"));
+								}
+							}
+						} else if (content.equals("02020202020202020202")) {
+							// 结束记录,更新到数据库,移除记录表中上次的数据
+							synchronized (rfid) {
+								DeviceLogx.addRfidToDB(object.getString("mac"), rfid.get(object.getString("mac")));
+								rfid.remove(object.getString("mac"));
+							}
+						} else {
+							// 叠加记录标签
+							synchronized (rfid) {
+								String c = rfid.get(object.getString("mac"));
+								c += content;
+								rfid.put(object.getString("mac"), c);
+							}
+						}
 					} else {
 						// 正常更新同步设备数据
 						DeviceEntity d = DeviceInfox.findDeviceByMac(object.getString("mac"));
@@ -60,6 +84,8 @@ public class UpdateDeviceInfo extends HttpServlet {
 						device.setMac_address(object.getString("mac"));
 						device.setDid(object.getString("did"));
 						device.setProduct_key(object.getString("product_key"));
+						// 设备日志
+						DeviceLogx.addLogToDB(object.getString("mac"), object.toString());
 						if (object.getString("event_type").equals("device_status_kv")) {
 							JSONObject devicejson = object.getJSONObject("data");
 							device.setDoor_open(devicejson.getInt("door_open"));
@@ -73,7 +99,7 @@ public class UpdateDeviceInfo extends HttpServlet {
 							device.setScan_time(devicejson.getInt("scan_time"));
 							device.setSet_temp(devicejson.getInt("set_temp"));
 							device.setReal_temp(devicejson.getInt("real_temp"));
-							if (d.status) {
+							if (d.isStatus()) {
 								// 存在该设备
 								execute = DeviceInfox.updateDeviceInfo(device);
 								device.setStatus(execute);
