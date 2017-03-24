@@ -1,37 +1,64 @@
 package fuck;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
-import mvn.sql.DBUtil;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main {
-	private static final Logger LOG = LogManager.getLogger(Main.class);
-
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		LOG.debug("卧槽，卧槽");
-		LOG.error("哈哈，");
-		LOG.info("控制台信息");
-		try {
-			Connection c=DBUtil.getConnectionAli();
-			LOG.debug("c="+(c==null?"null":"cunzai"));
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for (int i = 0; i < 10; i++) {
+			int numOfThreads = Runtime.getRuntime().availableProcessors()*2;
+			System.err.println("numOfThreads----"+numOfThreads);
+			ExecutorService executor = Executors.newFixedThreadPool(numOfThreads);
+			executor.submit(new Callable<String>() {
+				@Override
+				public String call() throws Exception {
+					// TODO Auto-generated method stub
+					String result=sendGet();
+					System.out.println("I----"+result);
+					return result;
+				}
+			});
 		}
 	}
 
+	public static String sendGet() {
+		String result = "";
+		BufferedReader in = null;
+		try {
+			String urlNameString = "http://localhost:8080/mvn/Userinfo";
+			URL realUrl = new URL(urlNameString);
+			// 打开和URL之间的连接
+			URLConnection connection = realUrl.openConnection();
+			// 设置通用的请求属性
+			connection.setRequestProperty("accept", "*/*");
+			connection.setRequestProperty("connection", "Keep-Alive");
+			// 建立实际的连接
+			connection.connect();
+			// 定义 BufferedReader输入流来读取URL的响应
+			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			String line;
+			while ((line = in.readLine()) != null) {
+				result += line;
+			}
+		} catch (Exception e) {
+			System.out.println("发送GET请求出现异常！" + e);
+			e.printStackTrace();
+		}
+		// 使用finally块来关闭输入流
+		finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return result;
+	}
 }
