@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 import mvn.entity.DeviceEntity;
 import mvn.sql.DeviceInfox;
 import mvn.sql.DeviceLogx;
+import util.Stringx;
 
 /**
  * Servlet implementation class UpdateDeviceInfo
@@ -84,6 +86,7 @@ public class UpdateDeviceInfo extends HttpServlet {
 						device.setMac_address(object.getString("mac"));
 						device.setDid(object.getString("did"));
 						device.setProduct_key(object.getString("product_key"));
+						device.setUpdate_time(Stringx.unixToJava(object.getInt("created_at") + "", ""));
 						// 设备日志
 						DeviceLogx.addLogToDB(object.getString("mac"), object.toString());
 						if (object.getString("event_type").equals("device_status_kv")) {
@@ -122,9 +125,15 @@ public class UpdateDeviceInfo extends HttpServlet {
 									out.println("{status:true,msg:操作失败}");
 								}
 							}
-						} else if (object.getString("event_type").equals("device_offline")) {
-							// 设备离线
-							device.setOnline(0);
+						} else if (object.getString("event_type").equals("device_offline")
+								|| object.getString("event_type").equals("device_online")) {
+							// 设备上线/离线
+							if (object.getString("event_type").equals("device_offline")) {
+								device.setOnline(0);
+							} else {
+								device.setOnline(1);
+								device.setIp_address(object.getString("ip"));
+							}
 							execute = DeviceInfox.updateDeviceStatusByMac(device);
 							device.setStatus(execute);
 							if (execute) {

@@ -115,8 +115,8 @@ public class DeviceInfox {
 			String SQL = "UPDATE device_info SET did='" + device.getDid() + "',is_online=" + device.getOnline()
 					+ ",light=" + device.getLight() + ",set_temp=" + device.getSet_temp() + ",real_temp="
 					+ device.getReal_temp() + ",door_open=" + device.getDoor_open() + ",scaning=" + device.getScaning()
-					+ ",scan_time=" + device.getScan_time() + ",work_model=" + device.getWork_model()
-					+ " where mac_address='" + device.getMac_address() + "'";
+					+ ",scan_time=" + device.getScan_time() + ",work_model=" + device.getWork_model() + ",update_time='"
+					+ device.getUpdate_time() + "' where mac_address='" + device.getMac_address() + "'";
 			PreparedStatement p = conn.prepareStatement(SQL);
 			execute = p.execute();
 			p.close();
@@ -143,8 +143,15 @@ public class DeviceInfox {
 		boolean execute = false;
 		try {
 			Connection conn = DBUtil.getConnectionAli();
-			String SQL = "UPDATE device_info SET is_online='" + device.getOnline() + " where mac_address='"
-					+ device.getMac_address() + "'";
+			String SQL = "";
+			if (null != device.getIp_address()) {
+				SQL = "UPDATE device_info SET is_online=" + device.getOnline() + ",update_time='"
+						+ device.getUpdate_time() + "',ip_address='" + device.getIp_address() + "' where mac_address='"
+						+ device.getMac_address() + "'";
+			} else {
+				SQL = "UPDATE device_info SET is_online=" + device.getOnline() + ",update_time='"
+						+ device.getUpdate_time() + "' where mac_address='" + device.getMac_address() + "'";
+			}
 			PreparedStatement p = conn.prepareStatement(SQL);
 			execute = p.execute();
 			p.close();

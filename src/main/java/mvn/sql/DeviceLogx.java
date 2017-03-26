@@ -3,9 +3,8 @@ package mvn.sql;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+
+import util.Stringx;
 
 public class DeviceLogx {
 	/***
@@ -16,15 +15,12 @@ public class DeviceLogx {
 	 * @param note
 	 */
 	public static void addLogToDB(String macAddress, String note) {
-		Date date = Calendar.getInstance().getTime();
-		SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String today = simpleFormat.format(date);
 		try {
 			Connection conn = DBUtil.getConnectionAli();
 			String SQL = "INSERT INTO device_status_log (mac_address,date,note)VALUES(?,?,?)";
 			PreparedStatement p = conn.prepareStatement(SQL);
 			p.setString(1, macAddress);
-			p.setString(2, today);
+			p.setString(2, Stringx.getCurrentTime());
 			p.setString(3, note);
 			p.execute();
 			p.close();
@@ -47,15 +43,12 @@ public class DeviceLogx {
 	 * @param note
 	 */
 	public static void addRfidToDB(String macAddress, String note) {
-		Date date = Calendar.getInstance().getTime();
-		SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String today = simpleFormat.format(date);
 		try {
 			Connection conn = DBUtil.getConnectionAli();
 			String SQL = "INSERT INTO device_rfid_log (mac_address,date,note)VALUES(?,?,?)";
 			PreparedStatement p = conn.prepareStatement(SQL);
 			p.setString(1, macAddress);
-			p.setString(2, today);
+			p.setString(2, Stringx.getCurrentTime());
 			p.setString(3, note);
 			p.execute();
 			p.close();
