@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC 
+          "-//Hibernate/Hibernate Configuration DTD 3.0//EN" 
+          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+
+	<session-factory>
+		<!-- 1. 数据库连接池配置 -->
+		<!--配置数据库的驱动程序，Hibernate在连接数据库时，需要用到数据库的驱动程序 -->
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver </property>
+		<!--设置数据库的连接url:jdbc:mysql://localhost/hibernate,其中localhost表示mysql服务器名称，此处为本机， 
+			hibernate是数据库名 -->
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/smart_cabinet?useSSL=false&amp;characterEncoding=UTF-8&amp;useUnicode=true</property>
+		<!--连接数据库是用户名 -->
+		<property name="hibernate.connection.username">root</property>
+		<!--连接数据库是密码 -->
+		<property name="hibernate.connection.password">123456</property>
+		<!--数据库连接池的大小 -->
+		<property name="hibernate.connection.pool.size">20</property>
+		<!-- 数据库方法配置，hibernate在运行的时候，会根据不同的方言生成符合当前数据库语法的sql -->
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
+		<!-- 2. 其他相关配置 -->
+		<!-- 2.1 显示hibernate在运行时候执行的sql语句 -->
+		<property name="hibernate.show_sql">true</property>
+		<!-- 2.2 格式化sql -->
+		<property name="hibernate.format_sql">true</property>
+		<!-- 2.3 自动建表 -->
+		<property name="hibernate.hbm2ddl.auto">update</property>
+		<property name="current_session_context_class">thread</property>
+		<!-- 3. 加载所有映射 -->
+		<mapping resource="hibernate.hbm.xml" />
+
+	</session-factory>
+
+</hibernate-configuration>

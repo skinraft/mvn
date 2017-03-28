@@ -4,7 +4,8 @@ public class DeviceEntity extends BaseEntity {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6477475764709881600L;
+	public static final long serialVersionUID = -6477475764709881600L;
+	int id;
 	String mac_address;
 	String did;
 	String ip_address;
@@ -22,10 +23,36 @@ public class DeviceEntity extends BaseEntity {
 	int work_model;
 	int enable;
 	int door_open;
-	
+
+	public void update(DeviceEntity device) {
+		this.did = device.getDid();
+		this.ip_address = device.getIp_address();
+		this.remark = device.getRemark();
+		this.online = device.getOnline();
+		this.set_temp = device.getSet_temp();
+		this.real_temp = device.real_temp;
+		this.light = device.light;
+		this.scaning = device.getScaning();
+		this.scan_time = device.getScan_time();
+		this.scan_device_type = device.getScan_device_type();
+		this.update_time = device.getUpdate_time();
+		this.work_model = device.getWork_model();
+		this.enable = device.getEnable();
+		this.door_open = device.getDoor_open();
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
+	}
+
 	public void setDoor_open(int door_open) {
 		this.door_open = door_open;
 	}
+
 	public int getDoor_open() {
 		return door_open;
 	}
@@ -168,7 +195,7 @@ public class DeviceEntity extends BaseEntity {
 				+ ", remark:" + remark + ", online:" + online + ", set_temp:" + set_temp + ", real_temp:" + real_temp
 				+ ", light:" + light + ", scaning:" + scaning + ", scan_time:" + scan_time + ", scan_device_type:"
 				+ scan_device_type + ", update_time:" + update_time + ", work_model:" + work_model + ", enable:"
-				+ enable +",door_open:"+door_open+ "}}";
+				+ enable + ",door_open:" + door_open + "}}";
 	}
 
 }
