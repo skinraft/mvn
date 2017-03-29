@@ -42,7 +42,12 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>5.2.9.Final</version>
 		</dependency>
-
+		<!-- BASE64解析 -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.9</version>
+		</dependency>
 	</dependencies>
 
 </project>
